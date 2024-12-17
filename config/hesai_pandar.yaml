@@ -1,0 +1,61 @@
+common:
+    lid_topic:  "/hesai/pandar" #"/velodyne_points"
+    imu_topic:  "/alphasense/imu" # "/imu/data"
+    time_sync_en: false         # ONLY turn on when external time synchronization is really not possible
+    time_offset_lidar_to_imu: 0.0 # Time offset between lidar and IMU calibrated by other algorithms, e.g. LI-Init (can be found in README).
+                                  # This param will take effect no matter what time_sync_en is. So if the time offset is not known exactly, please set as 0.0
+
+preprocess:
+    lidar_type: 5                # 1 for Livox serials LiDAR, 2 for Velodyne LiDAR, 3 for ouster LiDAR, 
+    scan_line: 32
+    scan_rate: 10                # only need to be set for velodyne, unit: Hz,
+    timestamp_unit: 0            # the unit of time/t field in the PointCloud2 rostopic: 0-second, 1-milisecond, 2-microsecond, 3-nanosecond.
+    blind: 2
+
+mapping:
+    acc_cov: 0.1
+    gyr_cov: 0.1
+    b_acc_cov: 0.0001
+    b_gyr_cov: 0.0001
+    fov_degree:    360
+    det_range:     120.0
+    extrinsic_est_en:  false      # true: enable the online estimation of IMU-LiDAR extrinsic,
+    extrinsic_T: [ -0.001, -0.00855,  0.055]
+    extrinsic_R: [ 0, -1, 0, 
+                   -1, 0, 0, 
+                   0, 0, -1]
+publish:
+    path_en:  false
+    scan_publish_en:  true       # false: close all the point cloud output
+    dense_publish_en: true       # false: low down the points number in a global-frame point clouds scan.
+    scan_bodyframe_pub_en: true  # true: output the point cloud scans in IMU-body-frame
+
+pcd_save:
+    pcd_save_en: true
+    interval: -1                 # how many LiDAR frames saved in each pcd file; 
+                                 # -1 : all frames will be saved in ONE pcd file, may lead to memory crash when having too much frames.
+
+
+# From the HILTI Challenge dataset 2022 website, here is the lidar_calibration.yaml file
+# sensors:
+#   imu:
+#     extrinsics:
+#       quaternion: [ 0.0, 0.0, 0.0, 1.0 ]
+#       translation: [ 0.0, 0.0, 0.0 ]
+#     intrinsics:
+#       parameters:
+#         bias_a: [ 0.06080652138668933, 0.08353074835853214, 0.057072968234636895 ]
+#         bias_g: [ -0.0015351229643790084, -0.0013449146576507546, 0.00030127855524786183 ]
+#         gravity: [ 0.01165152782783894, 9.804989173462031, -0.008749296634685332 ]
+#       type: IMU
+#     parent: base_link
+#   PandarXT-32:
+#     extrinsics:
+#       quaternion: [ 0.7071068, -0.7071068, 0, 0 ]
+#       translation: [ -0.001, -0.00855, 0.055 ]
+#     parent: imu
+#   measurement_tip:
+#     parent: imu
+#     extrinsics:
+#       quaternion: [ 0, 0, 0, 1 ]
+#       translation: [ 0.059, -0.00855, 0.1964 ]
