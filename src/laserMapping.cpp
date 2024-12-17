@@ -372,6 +372,7 @@ bool sync_packages(MeasureGroup &meas)
     }
 
     /*** push a lidar scan ***/
+    constexpr auto time_unit_scale=1000.0;
     if(!lidar_pushed)
     {
         meas.lidar = lidar_buffer.front();
@@ -383,15 +384,15 @@ bool sync_packages(MeasureGroup &meas)
             lidar_end_time = meas.lidar_beg_time + lidar_mean_scantime;
             ROS_WARN("Too few input point cloud!\n");
         }
-        else if (meas.lidar->points.back().curvature / double(1000) < 0.5 * lidar_mean_scantime)
+        else if (meas.lidar->points.back().curvature / time_unit_scale < 0.5 * lidar_mean_scantime)
         {
             lidar_end_time = meas.lidar_beg_time + lidar_mean_scantime;
         }
         else
         {
             scan_num ++;
-            lidar_end_time = meas.lidar_beg_time + meas.lidar->points.back().curvature / double(1000);
-            lidar_mean_scantime += (meas.lidar->points.back().curvature / double(1000) - lidar_mean_scantime) / scan_num;
+            lidar_end_time = meas.lidar_beg_time + meas.lidar->points.back().curvature / time_unit_scale;
+            lidar_mean_scantime += (meas.lidar->points.back().curvature / time_unit_scale - lidar_mean_scantime) / scan_num;
         }
         if(lidar_type == MARSIM)
             lidar_end_time = meas.lidar_beg_time;

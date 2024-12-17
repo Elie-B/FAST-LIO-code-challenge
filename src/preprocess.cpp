@@ -1,8 +1,5 @@
 #include "preprocess.h"
 
-#define RETURN0     0x00
-#define RETURN0AND1 0x10
-
 Preprocess::Preprocess()
   :feature_enabled(0), lidar_type(AVIA), blind(0.01), point_filter_num(1)
 {
@@ -468,7 +465,7 @@ void Preprocess::hesai_handler(const sensor_msgs::PointCloud2::ConstPtr &msg)
 
     pcl::PointCloud<hesai_ros::Point> pl_orig;
     pcl::fromROSMsg(*msg, pl_orig);
-    int plsize = pl_orig.points.size();
+    const auto plsize = pl_orig.points.size();
     if (plsize == 0) return;
     pl_surf.reserve(plsize);
 
@@ -477,18 +474,18 @@ void Preprocess::hesai_handler(const sensor_msgs::PointCloud2::ConstPtr &msg)
     const auto timestamp_offset = pl_orig.header.stamp / 1e3; // convert to ms 
     if(feature_enabled)
     {
-      for (int i = 0; i < N_SCANS; i++)
+      for (auto i = 0; i < N_SCANS; i++)
       {
         pl_buff[i].clear();
         pl_buff[i].reserve(plsize);
       }
-      for (int i = 0; i < plsize; i++)
+      for (auto i = 0; i < plsize; i++)
       {
         PointType added_pt;
         added_pt.normal_x = 0;
         added_pt.normal_y = 0;
         added_pt.normal_z = 0;
-        int layer  = pl_orig.points[i].ring;
+        const auto layer  = pl_orig.points[i].ring;
         if (layer >= N_SCANS) continue;
         added_pt.x = pl_orig.points[i].x;
         added_pt.y = pl_orig.points[i].y;
@@ -500,10 +497,10 @@ void Preprocess::hesai_handler(const sensor_msgs::PointCloud2::ConstPtr &msg)
         pl_buff[layer].points.push_back(added_pt);
       }
 
-      for (int j = 0; j < N_SCANS; j++)
+      for (auto j = 0; j < N_SCANS; j++)
       {
         PointCloudXYZI &pl = pl_buff[j];
-        int linesize = pl.size();
+        auto linesize = pl.size();
         if (linesize < 2) continue;
         vector<orgtype> &types = typess[j];
         types.clear();
@@ -524,7 +521,7 @@ void Preprocess::hesai_handler(const sensor_msgs::PointCloud2::ConstPtr &msg)
     else
     {
 
-      for (int i = 0; i < plsize; i++)
+      for (auto i = 0; i < plsize; i++)
       {
         PointType added_pt;
         added_pt.normal_x = 0;
