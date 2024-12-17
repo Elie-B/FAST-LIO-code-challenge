@@ -137,8 +137,8 @@ nav_msgs::Odometry odomAftMapped;
 geometry_msgs::Quaternion geoQuat;
 geometry_msgs::PoseStamped msg_body_pose;
 
-shared_ptr<Preprocess> p_pre(new Preprocess());
-shared_ptr<ImuProcess> p_imu(new ImuProcess());
+boost::shared_ptr<Preprocess> p_pre(new Preprocess());
+boost::shared_ptr<ImuProcess> p_imu(new ImuProcess());
 
 void SigHandle(int sig)
 {
